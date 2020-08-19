@@ -1,0 +1,171 @@
+<nav class="navbar navbar-dark bg-dark sticky-top flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-4 col-lg-3 mr-0 px-3" href="#">
+    <img
+      width="40"
+      alt="Angular Logo"
+      src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="
+    />
+    Company name
+  </a>
+  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse"
+          data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <i class="fas fa-bars"></i>
+  </button>
+  <form [formGroup]="searchForm" class="search-section">
+    <input class="form-control form-control-dark w-100"
+           type="text"
+           placeholder="Enter keyword, author, title to search...."
+           aria-label="Input for keyword"
+           formControlName="searchText"
+           (keyup)="onChangeSearchInput()">
+    <i class="far fa-times-circle"
+       *ngIf="isSearch"
+       (click)="resetFilter()"></i>
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <button type="button" class="btn btn-primary"
+                (click)="filter()"
+                [disabled]="isSearch"
+                [ngClass]="{'btn-primary': !isSearch , 'btn-secondary': isSearch}">
+          <i class="fas fa-search"></i> Search
+        </button>
+      </li>
+    </ul>
+  </form>
+</nav>
+
+<div class="container-fluid">
+  <div class="row">
+    <nav id="sidebarMenu" class="col-md-4 col-lg-3 d-md-block bg-light sidebar collapse">
+      <div class="sidebar-sticky">
+        <div class="add-speech">
+          <button type="button" class="btn btn-primary w-100"
+                  (click)="addSpeech()">
+            <i class="fas fa-plus-circle"></i> Add new speech
+          </button>
+        </div>
+        <ul class="nav flex-column">
+          <li class="nav-item" *ngFor="let speech of speeches">
+            <a class="nav-link" href="#"
+               [ngClass]="{'active': speech.id == selectedSpeech.id}"
+               (click)="onSelectSpeech(speech);">
+              {{speech.title}}
+              <i class="fas fa-angle-double-right"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main role="main" class="col-md-8 ml-sm-auto col-lg-9 px-md-5">
+      <div class="no-record" *ngIf="speeches && speeches.length == 0">
+        <i class="fab fa-searchengin text-danger"></i>
+        Record Not Found!
+      </div>
+      <form [formGroup]="speechForm" *ngIf="speeches.length > 0">
+        <div class="content">
+          <div class="row mt-4 mb-3">
+            <div class="col-lg-12 mb-2">
+              <div class="form-group">
+                <label for="keywords">
+                  Title
+                  <i class="fas fa-asterisk required text-danger"></i>
+                </label>
+                <input #speechTitle
+                       type="text"
+                       class="form-control form-control-lg"
+                       id="title"
+                       placeholder="Title"
+                       formControlName="title">
+              </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+              <div class="form-group">
+                <label for="author">
+                  Author
+                </label>
+                <input type="text"
+                       class="form-control form-control-lg"
+                       id="author"
+                       placeholder="Author"
+                       formControlName="author">
+              </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+              <div class="form-group">
+                <label for="datepicker">
+                  Speech Date
+                </label>
+                <div class="input-group">
+                  <input class="form-control form-control-lg"
+                         name="d2"
+                         type="date"
+                         formControlName="speechDate">
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12 mb-2">
+              <div class="form-group">
+                <label for="keywords">
+                  Speech Keywords
+                </label>
+                <input type="text"
+                       class="form-control form-control-lg"
+                       id="keywords"
+                       placeholder="Keywords"
+                       formControlName="keywords">
+              </div>
+            </div>
+            <div class="col-lg-12 mb-2">
+              <div class="form-group">
+                <label for="speechcontent">
+                  Speech Content
+                </label>
+                <textarea class="form-control"
+                          placeholder="Speech Content place here..."
+                          id="speechcontent"
+                          rows="10"
+                          formControlName="content"></textarea>
+              </div>
+            </div>
+            <div class="col-lg-12 mb-4">
+              <div class="actions">
+                <button type="button" class="btn btn-primary"
+                        (click)="save(toastSuccessMsg)"
+                        [disabled]="!selectedSpeech || !speechForm.dirty">
+                  <i class="far fa-save"></i> Save
+                </button>
+                <button type="button" class="btn btn-primary"
+                        (click)="delete(toastDelMsg)"
+                        [disabled]="!selectedSpeech">
+                  <i class="far fa-trash-alt"></i> Delete
+                </button>
+                <button type="button" class="btn btn-primary"
+                        (click)="share()"
+                        [disabled]="!selectedSpeech">
+                  <i class="fas fa-share-alt"></i> Share
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </main>
+  </div>
+</div>
+
+<ng-template #toastSuccessMsg>
+  <div class="text-center">
+    <i class="fas fa-check-circle fa-1x"></i>
+    Content Successfully Saved
+  </div>
+</ng-template>
+
+<ng-template #toastDelMsg>
+  <div class="text-center">
+    <i class="far fa-trash-alt fa-1x"></i>
+    Content Succesfully Deleted
+  </div>
+</ng-template>
+
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
